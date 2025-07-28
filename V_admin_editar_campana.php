@@ -1,7 +1,6 @@
 <?php
-// --- Archivo: views/V_admin_editar_campana.php (NUEVO) ---
-// Esta vista espera que AdminController le pase las variables:
-// $campana (datos de la campaña a editar) y $jefes (lista de todos los jefes).
+// --- Archivo: views/V_admin_editar_campana.php (MODIFICADO) ---
+// Ahora muestra la imagen actual y permite subir una nueva.
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -11,6 +10,14 @@
     <title>Editar Campaña - OnixBPO</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .current-image-preview {
+            max-width: 200px;
+            height: auto;
+            border-radius: 0.375rem;
+            border: 1px solid #dee2e6;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -21,8 +28,11 @@
                         <h3>Editando Campaña</h3>
                     </div>
                     <div class="card-body">
-                        <form action="index.php?c=Admin&a=actualizarCampana" method="POST">
+                        <!-- ATRIBUTO CLAVE: enctype para la subida de archivos -->
+                        <form action="index.php?c=Admin&a=actualizarCampana" method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="id" value="<?php echo $campana['id']; ?>">
+                            <!-- Campo oculto para saber el nombre de la imagen actual -->
+                            <input type="hidden" name="imagen_actual" value="<?php echo htmlspecialchars($campana['imagen_url'] ?? ''); ?>">
                             
                             <div class="mb-3">
                                 <label for="nombre_campana" class="form-label">Nombre de la Campaña</label>
@@ -34,6 +44,24 @@
                                 <label for="descripcion" class="form-label">Descripción</label>
                                 <textarea class="form-control" id="descripcion" name="descripcion" rows="4"><?php echo htmlspecialchars($campana['descripcion']); ?></textarea>
                             </div>
+
+                            <!-- SECCIÓN PARA GESTIONAR LA IMAGEN -->
+                            <div class="mb-3">
+                                <label class="form-label">Imagen de la Campaña</label>
+                                <?php if (!empty($campana['imagen_url'])): ?>
+                                    <div class="mb-2">
+                                        <p class="mb-1">Imagen actual:</p>
+                                        <img src="uploads/campanas/<?php echo htmlspecialchars($campana['imagen_url']); ?>" alt="Imagen actual" class="current-image-preview">
+                                    </div>
+                                <?php else: ?>
+                                    <p class="text-muted">Esta campaña no tiene una imagen asignada.</p>
+                                <?php endif; ?>
+                                
+                                <label for="imagen_campana" class="form-label">Subir nueva imagen (opcional)</label>
+                                <input class="form-control" type="file" id="imagen_campana" name="imagen_campana" accept="image/jpeg, image/png">
+                                <small class="form-text text-muted">Si subes una nueva imagen, la anterior será reemplazada.</small>
+                            </div>
+                            <!-- FIN DE SECCIÓN DE IMAGEN -->
 
                             <div class="mb-3">
                                 <label for="jefe_id" class="form-label">Jefe Asignado</label>

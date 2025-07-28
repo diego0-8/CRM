@@ -1,3 +1,7 @@
+<?php
+// --- Archivo: views/V_admin_dashboard.php (MODIFICADO) ---
+// Se añade el campo para subir imagen y el atributo enctype al formulario.
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -110,11 +114,11 @@
                         </form>
                     </div>
                 </div>
-                <!-- INICIO: Formulario para Crear Campaña -->
+                
                 <div class="card shadow-sm mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Crear Nueva Campaña</h5>
-                        <form action="index.php?c=Admin&a=crearCampana" method="POST">
+                        <form action="index.php?c=Admin&a=crearCampana" method="POST" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="nombre_campana" class="form-label">Nombre de la Campaña</label>
                                 <input type="text" class="form-control" id="nombre_campana" name="nombre_campana" required>
@@ -122,6 +126,11 @@
                             <div class="mb-3">
                                 <label for="descripcion" class="form-label">Descripción</label>
                                 <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="imagen_campana" class="form-label">Imagen de la Campaña</label>
+                                <input class="form-control" type="file" id="imagen_campana" name="imagen_campana" accept="image/jpeg, image/png">
+                                <small class="form-text text-muted">Opcional. Se usará en la página de servicios.</small>
                             </div>
                             <div class="mb-3">
                                 <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
@@ -133,7 +142,6 @@
                         </form>
                     </div>
                 </div>
-                <!-- FIN: Formulario para Crear Campaña -->
             </div>
         </div>
     </div>

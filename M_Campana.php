@@ -92,7 +92,8 @@ class Campana {
      */
     public static function obtenerPorId($id) {
         $conexion = Conexion::conectar();
-        $stmt = $conexion->prepare("SELECT id, nombre_campana, descripcion, creada_por FROM campanas WHERE id = ?");
+        // Se añade la columna imagen_url a la consulta
+        $stmt = $conexion->prepare("SELECT id, nombre_campana, descripcion, imagen_url, creada_por FROM campanas WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $resultado = $stmt->get_result();
@@ -108,9 +109,10 @@ class Campana {
      */
     public static function actualizar($datos) {
         $conexion = Conexion::conectar();
-        $sql = "UPDATE campanas SET descripcion = ?, creada_por = ? WHERE id = ?";
+        // La consulta también actualiza la imagen_url
+        $sql = "UPDATE campanas SET descripcion = ?, imagen_url = ?, creada_por = ? WHERE id = ?";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sii", $datos['descripcion'], $datos['jefe_id'], $datos['id']);
+        $stmt->bind_param("ssii", $datos['descripcion'], $datos['imagen_url'], $datos['jefe_id'], $datos['id']);
         $exito = $stmt->execute();
         $stmt->close();
         $conexion->close();
@@ -170,8 +172,7 @@ class Campana {
 
     public static function obtenerActivasPublicas() {
         $conexion = Conexion::conectar();
-        // Seleccionamos solo las campañas activas que ya tienen un jefe (creada_por no es nulo)
-        $sql = "SELECT c.id, c.nombre_campana, c.descripcion 
+        $sql = "SELECT c.id, c.nombre_campana, c.descripcion, c.imagen_url 
                 FROM campanas c
                 WHERE c.estado = 'activa' AND c.creada_por IS NOT NULL";
         $resultado = $conexion->query($sql);

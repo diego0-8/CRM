@@ -19,12 +19,10 @@ class AdminController {
      * Carga el panel principal del administrador.
      * Mueve la lógica de obtención de datos a los modelos.
      */
-    public function dashboard() {
-        // La lógica para obtener datos ahora llama a los modelos.
+     public function dashboard() {
         $conteo_usuarios = Usuario::contarUsuarios();
         $jefes = Usuario::obtenerJefes();
         
-        // Estas consultas son más específicas y pueden permanecer aquí o moverse a un modelo de "Reportes".
         $conexion = Conexion::conectar();
         $resultado_conteo_campanas = $conexion->query("SELECT COUNT(id) as total FROM campanas WHERE fecha_fin IS NULL OR fecha_fin >= CURDATE()");
         $conteo_campanas = $resultado_conteo_campanas ? $resultado_conteo_campanas->fetch_assoc()['total'] : 0;
@@ -96,7 +94,38 @@ class AdminController {
      */
     public function actualizarCampana() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            Campana::actualizar($_POST);
+            $datos = $_POST;
+            $directorio_destino = "uploads/campanas/";
+
+            // Verificar si se subió una nueva imagen
+            if (isset($_FILES['imagen_campana']) && $_FILES['imagen_campana']['error'] == UPLOAD_ERR_OK) {
+                
+                $archivo_temporal = $_FILES['imagen_campana']['tmp_name'];
+                $nombre_original = basename($_FILES['imagen_campana']['name']);
+                $extension = pathinfo($nombre_original, PATHINFO_EXTENSION);
+                $nombre_nuevo_archivo = uniqid('campana_', true) . '.' . $extension;
+                $ruta_nueva = $directorio_destino . $nombre_nuevo_archivo;
+
+                if (move_uploaded_file($archivo_temporal, $ruta_nueva)) {
+                    // Si la subida es exitosa, borramos la imagen anterior si existía
+                    if (!empty($datos['imagen_actual'])) {
+                        $ruta_antigua = $directorio_destino . $datos['imagen_actual'];
+                        if (file_exists($ruta_antigua)) {
+                            unlink($ruta_antigua);
+                        }
+                    }
+                    // Asignamos el nombre del nuevo archivo para guardarlo en la BD
+                    $datos['imagen_url'] = $nombre_nuevo_archivo;
+                }
+            } else {
+                // --- ¡ESTA ES LA CORRECCIÓN CLAVE! ---
+                // Si no se subió una nueva imagen, mantenemos la que ya estaba.
+                $datos['imagen_url'] = $datos['imagen_actual'];
+            }
+
+            // Llamamos al modelo para actualizar la base de datos
+            Campana::actualizar($datos);
+            
             header('Location: index.php?c=Admin&a=gestionarCampanas&status=actualizada');
             exit();
         }
@@ -156,7 +185,31 @@ class AdminController {
     
     public function crearCampana() {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if (Campana::crear($_POST)) {
+            
+            $datos = $_POST;
+            $nombre_archivo_imagen = null;
+
+            if (isset($_FILES['imagen_campana']) && $_FILES['imagen_campana']['error'] == UPLOAD_ERR_OK) {
+                
+                $archivo_temporal = $_FILES['imagen_campana']['tmp_name'];
+                $nombre_original = basename($_FILES['imagen_campana']['name']);
+                $extension = pathinfo($nombre_original, PATHINFO_EXTENSION);
+                
+                $directorio_destino = "uploads/campanas/";
+                
+                $nombre_archivo_imagen = uniqid('campana_', true) . '.' . $extension;
+                
+                $ruta_destino = $directorio_destino . $nombre_archivo_imagen;
+
+                if (move_uploaded_file($archivo_temporal, $ruta_destino)) {
+                    $datos['imagen_url'] = $nombre_archivo_imagen;
+                } else {
+                    error_log("Error al mover el archivo subido a " . $ruta_destino);
+                    $datos['imagen_url'] = null;
+                }
+            }
+
+            if (Campana::crear($datos)) {
                 header("Location: index.php?c=Admin&a=dashboard&status=campana_creada");
             } else {
                 header("Location: index.php?c=Admin&a=dashboard&status=error_campana");

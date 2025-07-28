@@ -1,0 +1,93 @@
+/* --- FUENTES Y COLORES PRINCIPALES --- */
+:root {
+    --primary-color: #0d6efd; /* Azul primario de Bootstrap */
+    --secondary-color: #6c757d; /* Gris secundario */
+    --dark-blue: #212529; /* Un azul oscuro para textos */
+    --light-gray: #f8f9fa; /* Gris claro para fondos */
+    --font-family: 'Poppins', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    padding-top: 70px; /* Espacio para la barra de navegación fija */
+}
+
+/* --- BARRA DE NAVEGACIÓN --- */
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+.navbar .btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 50rem; /* Botones redondeados */
+}
+
+/* --- SECCIÓN HERO --- */
+.hero-section {
+    background: linear-gradient(rgba(20, 30, 48, 0.7), rgba(36, 59, 85, 0.7)), url('../../img/Frame\ 4.png') ;
+    background-size: cover;
+    height: 70vh; /* Altura de la sección principal */
+    color: white;
+}
+
+.hero-section h1 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* --- SECCIÓN DE CARACTERÍSTICAS --- */
+.features-section {
+    background-color: white;
+}
+
+.feature-item {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.icon-circle {
+    background-color: var(--primary-color);
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+/* --- SECCIÓN DE MISIÓN --- */
+.mission-section {
+    background-color: var(--light-gray);
+}
+
+/* --- SECCIÓN CALL TO ACTION (CTA) --- */
+.cta-section {
+    background: linear-gradient(to right, #0052D4, #4364F7, #6FB1FC);
+    padding: 6rem 0;
+}
+
+/* --- FOOTER --- */
+.footer-section {
+    background-color: var(--dark-blue);
+    color: #adb5bd;
+}
+
+.footer-section h5 {
+    color: white;
+}
+
+.footer-link {
+    color: #adb5bd;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+    color: white;
+    text-decoration: underline;
+}

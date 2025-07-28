@@ -1,25 +1,108 @@
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #a0a0a0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-}
-.login-container {
-    max-width: 420px;
-    width: 100%;
-}
-    .card {
-    border: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-.card-title {
-    color: #0d6efd;
+:root {
+    --primary-color: #0d6efd;
+    --dark-blue: #212529;
+    --font-family: 'Poppins', sans-serif;
 }
 
-.tex-center {
-    border-bottom: 10px;
-    font-size: 50px;
-    
+body {
+    font-family: var(--font-family);
+    background: linear-gradient(rgba(20, 30, 48, 0.7)), url('../../img/Frame\ 11.png') ;
+    margin: 0;
+    padding: 0;
+}
+
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.login-box {
+    display: flex;
+    width: 100%;
+    max-width: 900px; /* Ancho máximo del contenedor de login */
+    min-height: 550px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Para que los bordes redondeados afecten a los hijos */
+}
+
+/* --- Panel Izquierdo (Imagen) --- */
+.login-image-panel {
+    flex: 1;
+    background: linear-gradient(rgba(20, 30, 48, 0.6), rgba(36, 59, 85, 0.6)), url('../../img/Frame\ 12.png') ;
+    background-size: cover;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Alinea el contenido hacia abajo */
+    padding: 2.5rem;
+}
+
+.login-image-content {
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Panel Derecho (Formulario) --- */
+.login-form-panel {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2.5rem;
+}
+
+.form-content {
+    width: 100%;
+    max-width: 350px;
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7; /* Un azul un poco más oscuro */
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .login-box {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .login-image-panel {
+        min-height: 250px;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .login-form-panel {
+        padding: 2rem 1.5rem;
+    }
 }
