@@ -11,10 +11,10 @@ class Usuario {
      */
     public static function buscarPorCorreo($correo) {
         $conexion = Conexion::conectar();
-        $sql = "SELECT u.id, u.nombre, u.apellido, u.password_hash, u.estado, r.nombre_rol 
-                FROM usuarios u
-                JOIN roles r ON u.rol_id = r.id
-                WHERE u.correo = ?";
+        $sql = "SELECT u.id, u.nombre, u.apellido, u.password_hash, u.estado, r.nombre_rol, u.sip_user, u.sip_secret 
+            FROM usuarios u
+            JOIN roles r ON u.rol_id = r.id
+            WHERE u.correo = ?";
         $stmt = $conexion->prepare($sql);
         $stmt->bind_param("s", $correo);
         $stmt->execute();

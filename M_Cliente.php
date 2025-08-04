@@ -55,16 +55,60 @@ class Cliente {
         }
     }
 
+    public static function obtenerGestionEquipo($jefe_id, $operario_id = null) {
+        $conexion = Conexion::conectar();
+        
+        $sql = "SELECT 
+                    cp.id as cliente_id, 
+                    cp.nombres_completos, 
+                    cp.telefono,
+                    cp.estado,
+                    u.id as operario_id,
+                    u.nombre as operario_nombre,
+                    u.apellido as operario_apellido,
+                    i.resultado,
+                    i.fecha_contacto,
+                    i.id as interaccion_id
+                    -- En el futuro, aquí podrías añadir una columna para la URL de la grabación
+                    -- i.url_grabacion 
+                FROM interacciones i
+                JOIN clientes_potenciales cp ON i.cliente_id = cp.id
+                JOIN usuarios u ON i.operario_id = u.id
+                WHERE i.jefe_id = ?";
+
+        $params = [$jefe_id];
+        $types = "i";
+
+        if ($operario_id !== null) {
+            $sql .= " AND i.operario_id = ?";
+            $params[] = $operario_id;
+            $types .= "i";
+        }
+
+        $sql .= " ORDER BY i.fecha_contacto DESC, i.fecha_asignacion DESC";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $clientes = $resultado->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        $conexion->close();
+        return $clientes;
+    }
+
     public static function asignarOperario($cliente_id, $operario_id, $jefe_id) {
         $conexion = Conexion::conectar();
         $conexion->begin_transaction();
         try {
+            // 1. Actualizar el estado del cliente a 'Asignado'
             $sql_update = "UPDATE clientes_potenciales SET estado = 'Asignado' WHERE id = ?";
             $stmt_update = $conexion->prepare($sql_update);
             $stmt_update->bind_param("i", $cliente_id);
             $stmt_update->execute();
             $stmt_update->close();
 
+            // 2. Crear el registro de la interacción
             $sql_insert = "INSERT INTO interacciones (cliente_id, operario_id, jefe_id, fecha_asignacion) VALUES (?, ?, ?, NOW())";
             $stmt_insert = $conexion->prepare($sql_insert);
             $stmt_insert->bind_param("iii", $cliente_id, $operario_id, $jefe_id);
@@ -75,6 +119,8 @@ class Cliente {
             return true;
         } catch (Exception $e) {
             $conexion->rollback();
+            // Opcional: registrar el error en un log para depuración
+            // error_log('Error al asignar cliente: ' . $e->getMessage());
             return false;
         } finally {
             $conexion->close();

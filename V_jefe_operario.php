@@ -1,11 +1,6 @@
 <?php
 // --- V_jefe_dashboard_rediseñado.php ---
 // Este es el nuevo panel central para el Jefe de Campaña.
-// Asume que el controlador le pasa las siguientes variables:
-// $kpis = ['total_asignados' => ..., 'total_contactados' => ..., 'total_ventas' => ...]
-// $clientes_nuevos = array de clientes sin asignar.
-// $gestion_activa_equipo = array de todas las gestiones activas del equipo.
-// $operarios_equipo = array de los operarios del jefe.
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -17,7 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Se recomienda tener un CSS específico para este nuevo dashboard -->
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>views/css/style_jefe_dashboard.css">
+    <link rel="stylesheet" href="views/css/style_jefe_dashboard.css">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-info shadow-sm">
@@ -30,7 +25,7 @@
                     </span>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-light" href="<?php echo BASE_URL; ?>index.php?c=Usuario&a=logout">Cerrar Sesión</a>
+                    <a class="btn btn-light" href="index.php?c=Usuario&a=logout">Cerrar Sesión</a>
                 </li>
             </ul>
         </div>
@@ -139,7 +134,7 @@
                                             <td class="text-center">
                                                 <div class="btn-group">
                                                     <button class="btn btn-sm btn-outline-secondary" title="Reasignar Cliente"><i class="bi bi-arrow-repeat"></i></button>
-                                                    <button class="btn btn-sm btn-outline-info" title="Ver Historial"><i class="bi bi-search"></i></button>
+                                                    <a href="index.php?c=Jefe&a=verOperario&id=<?php echo $gestion['operario_id']; ?>" class="btn btn-sm btn-outline-info" title="Ver Historial"><i class="bi bi-search"></i></a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -162,9 +157,8 @@
                              <div class="list-group-item">Aún no tienes operarios a tu cargo.</div>
                         <?php else: ?>
                             <?php foreach ($operarios_equipo as $operario): ?>
-                                <a href="<?php echo BASE_URL; ?>index.php?c=Jefe&a=verOperario&id=<?php echo $operario['id']; ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <a href="index.php?c=Jefe&a=verOperario&id=<?php echo $operario['id']; ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                                     <?php echo htmlspecialchars($operario['nombre'] . ' ' . $operario['apellido']); ?>
-                                    <span class="badge bg-primary rounded-pill">5</span> <!-- Ejemplo: clientes asignados -->
                                 </a>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -184,7 +178,8 @@
           </div>
           <div class="modal-body">
             <p>Selecciona el operario al que deseas asignar los <span id="cantidad-clientes"></span> clientes seleccionados.</p>
-            <form id="form-asignacion-masa">
+            <!-- ======================= CORRECCIÓN IMPORTANTE AQUÍ ======================= -->
+            <form id="form-asignacion-masa" action="index.php?c=Jefe&a=asignarCliente" method="POST">
                 <input type="hidden" name="cliente_ids_json" id="cliente_ids_json">
                 <select name="operario_id" class="form-select" required>
                     <option value="" disabled selected>Seleccionar operario...</option>
